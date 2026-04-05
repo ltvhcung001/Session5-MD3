@@ -5,6 +5,7 @@ import com.example.course_manager.dto.response.CourseInstructorResponse;
 import com.example.course_manager.dto.response.CourseResponse;
 import com.example.course_manager.dto.request.CourseUpdateRequest;
 import com.example.course_manager.entities.Course;
+import com.example.course_manager.entities.CourseStatus;
 import com.example.course_manager.entities.Instructor;
 import com.example.course_manager.repositories.CourseRepository;
 import com.example.course_manager.repositories.InstructorRepository;
@@ -43,6 +44,29 @@ public class CourseService {
         
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
         Page<Course> coursePage = courseRepository.findAll(pageable);
+        
+        Page<CourseResponse> responsePage = coursePage.map(this::mapToCourseResponse);
+
+        return new PageResponse<>(
+                responsePage.getContent(),
+                responsePage.getNumber(),
+                responsePage.getSize(),
+                (int) responsePage.getTotalElements(),
+                responsePage.getTotalPages(),
+                responsePage.isLast()
+        );
+    }
+
+    public PageResponse<CourseResponse> getPagedCoursesByStatus(int page, int size, String sortBy, Sort.Direction direction, CourseStatus status) {
+        if (page < 0) {
+            page = 0;
+        }
+        if (sortBy == null || sortBy.isEmpty()) {
+            sortBy = "id";
+        }
+        
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+        Page<Course> coursePage = courseRepository.findAllByStatus(status, pageable);
         
         Page<CourseResponse> responsePage = coursePage.map(this::mapToCourseResponse);
 
