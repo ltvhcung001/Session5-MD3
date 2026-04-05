@@ -16,6 +16,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import com.example.course_manager.dto.response.PageResponse;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,7 +33,7 @@ public class CourseService {
                 .collect(Collectors.toList());
     }
 
-    public Page<CourseResponse> getPagedCourses(int page, int size, String sortBy, Sort.Direction direction) {
+    public PageResponse<CourseResponse> getPagedCourses(int page, int size, String sortBy, Sort.Direction direction) {
         if (page < 0) {
             page = 0;
         }
@@ -42,7 +44,16 @@ public class CourseService {
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
         Page<Course> coursePage = courseRepository.findAll(pageable);
         
-        return coursePage.map(this::mapToCourseResponse);
+        Page<CourseResponse> responsePage = coursePage.map(this::mapToCourseResponse);
+
+        return new PageResponse<>(
+                responsePage.getContent(),
+                responsePage.getNumber(),
+                responsePage.getSize(),
+                (int) responsePage.getTotalElements(),
+                responsePage.getTotalPages(),
+                responsePage.isLast()
+        );
     }
 
     public CourseResponse getCourseById(Long id) {

@@ -3,6 +3,7 @@ package com.example.course_manager.controllers;
 import com.example.course_manager.dto.response.ApiResponse;
 import com.example.course_manager.dto.request.CourseCreateRequest;
 import com.example.course_manager.dto.response.CourseResponse;
+import com.example.course_manager.dto.response.PageResponse;
 import com.example.course_manager.dto.request.CourseUpdateRequest;
 import com.example.course_manager.services.CourseService;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 
 @RestController
@@ -20,13 +20,13 @@ public class CourseController {
     private final CourseService courseService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<Page<CourseResponse>>> getCourses(
+    public ResponseEntity<ApiResponse<PageResponse<CourseResponse>>> getCourses(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String sortBy,
             @RequestParam(defaultValue = "DESC") Sort.Direction direction) {
         
-        Page<CourseResponse> pagedCourses = courseService.getPagedCourses(page, size, sortBy, direction);
+        PageResponse<CourseResponse> pagedCourses = courseService.getPagedCourses(page, size, sortBy, direction);
         
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new ApiResponse<>(true, "Courses retrieved successfully", pagedCourses));
