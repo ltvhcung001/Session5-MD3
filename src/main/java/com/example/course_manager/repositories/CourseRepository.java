@@ -14,4 +14,7 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 
     @Query("SELECT c FROM Course c WHERE c.status = :status")
     Page<Course> findAllByStatus(@Param("status") CourseStatus status, Pageable pageable);
+
+    @Query("SELECT new com.example.course_manager.dto.response.CourseResponseV2(c.id, c.title, c.status) FROM Course c WHERE c.status = :status")
+    Page<com.example.course_manager.dto.response.CourseResponseV2> findAllProjectedByStatus(@Param("status") CourseStatus status, Pageable pageable);
 }

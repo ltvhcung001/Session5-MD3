@@ -2,7 +2,7 @@ package com.example.course_manager.controllers;
 
 import com.example.course_manager.dto.response.ApiResponse;
 import com.example.course_manager.dto.request.CourseCreateRequest;
-import com.example.course_manager.dto.response.CourseResponse;
+import com.example.course_manager.dto.response.CourseResponseV2;
 import com.example.course_manager.dto.response.PageResponse;
 import com.example.course_manager.entities.CourseStatus;
 import com.example.course_manager.dto.request.CourseUpdateRequest;
@@ -21,14 +21,14 @@ public class CourseController {
     private final CourseService courseService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<PageResponse<CourseResponse>>> getCourses(
+    public ResponseEntity<ApiResponse<PageResponse<CourseResponseV2>>> getCourses(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String sortBy,
             @RequestParam(defaultValue = "DESC") Sort.Direction direction,
             @RequestParam(defaultValue = "ACTIVE") CourseStatus status) {
         
-        PageResponse<CourseResponse> pagedCourses = courseService.getPagedCoursesByStatus(page, size, sortBy, direction, status);
+        PageResponse<CourseResponseV2> pagedCourses = courseService.getPagedCoursesByStatus(page, size, sortBy, direction, status);
         
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new ApiResponse<>(true, "Courses retrieved successfully", pagedCourses));
