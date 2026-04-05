@@ -3,6 +3,7 @@ package com.example.course_manager.services;
 import com.example.course_manager.dto.request.CourseCreateRequest;
 import com.example.course_manager.dto.response.CourseInstructorResponse;
 import com.example.course_manager.dto.response.CourseResponse;
+import com.example.course_manager.dto.response.CourseResponseV2;
 import com.example.course_manager.dto.request.CourseUpdateRequest;
 import com.example.course_manager.entities.Course;
 import com.example.course_manager.entities.CourseStatus;
@@ -57,7 +58,7 @@ public class CourseService {
         );
     }
 
-    public PageResponse<CourseResponse> getPagedCoursesByStatus(int page, int size, String sortBy, Sort.Direction direction, CourseStatus status) {
+    public PageResponse<CourseResponseV2> getPagedCoursesByStatus(int page, int size, String sortBy, Sort.Direction direction, CourseStatus status) {
         if (page < 0) {
             page = 0;
         }
@@ -66,9 +67,7 @@ public class CourseService {
         }
         
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
-        Page<Course> coursePage = courseRepository.findAllByStatus(status, pageable);
-        
-        Page<CourseResponse> responsePage = coursePage.map(this::mapToCourseResponse);
+        Page<CourseResponseV2> responsePage = courseRepository.findAllProjectedByStatus(status, pageable);
 
         return new PageResponse<>(
                 responsePage.getContent(),
