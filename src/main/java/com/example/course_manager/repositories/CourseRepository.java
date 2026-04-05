@@ -3,7 +3,7 @@ package com.example.course_manager.repositories;
 import com.example.course_manager.entities.Course;
 import com.example.course_manager.entities.CourseStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
-
+import com.example.course_manager.dto.response.CourseResponseV2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
@@ -14,4 +14,7 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 
     @Query("SELECT c FROM Course c WHERE c.status = :status")
     Page<Course> findAllByStatus(@Param("status") CourseStatus status, Pageable pageable);
+
+    @Query("SELECT new com.example.course_manager.dto.response.CourseResponseV2(c.id, c.title, c.status) FROM Course c WHERE c.status = :status")
+    Page<CourseResponseV2> findAllProjectedByStatus(@Param("status") CourseStatus status, Pageable pageable);
 }
